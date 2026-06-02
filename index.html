@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Báo Cáo Swap</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600;700&family=Barlow:wght@300;400;500;600&family=Barlow+Semi+Condensed:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--bg:#f4f3ef;--surf:#fff;--border:#dddbd4;--border2:#c8c5bc;--text:#1a1916;--muted:#7a7770;--green:#1a6644;--green-bg:#eaf4ee;--red:#b02a2a;--red-bg:#fdf0f0;--blue:#1a3a6e;--blue-bg:#eef2fa;--amber:#7a4a00;--amber-bg:#fdf6e3;--sans:'Barlow',sans-serif;--cond:'Barlow Condensed',sans-serif;--semi:'Barlow Semi Condensed',sans-serif}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13px}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.page{display:grid;grid-template-columns:200px 1fr;min-height:100vh}
+.sidebar{background:var(--text);color:#f4f3ef;position:sticky;top:0;height:100vh;display:flex;flex-direction:column}
+.sidebar-brand{padding:28px 20px 24px;border-bottom:1px solid rgba(255,255,255,.1)}
+.brand-tag{font-family:var(--cond);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:8px}
+.brand-title{font-family:var(--cond);font-size:26px;font-weight:700;line-height:1.1}
+.brand-date{font-family:var(--cond);font-size:12px;color:rgba(255,255,255,.5);margin-top:6px}
+.nav{padding:16px 0;flex:1;overflow-y:auto}
+.nav-section{padding:8px 20px 4px;font-family:var(--cond);font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.3)}
+.nav a{display:flex;align-items:center;gap:8px;padding:9px 20px;color:rgba(255,255,255,.6);text-decoration:none;font-size:12px;font-family:var(--semi);font-weight:500;transition:.15s;border-left:2px solid transparent}
+.nav a:hover{color:#fff;background:rgba(255,255,255,.06)}
+.nav a.active{color:#fff;border-left-color:#fff;background:rgba(255,255,255,.08)}
+.nav a .num{font-family:var(--cond);font-size:11px;color:rgba(255,255,255,.3);margin-left:auto}
+.sidebar-footer{padding:16px 20px;border-top:1px solid rgba(255,255,255,.1)}
+.stat-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.stat-label{font-size:10px;color:rgba(255,255,255,.4);font-family:var(--cond);text-transform:uppercase;letter-spacing:.08em}
+.stat-val{font-family:var(--cond);font-size:16px;font-weight:600;color:#fff}
+.topbar{background:var(--surf);border-bottom:1px solid var(--border);padding:12px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20}
+.topbar-title{font-family:var(--cond);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.topbar-title span{color:var(--text)}
+.clock{font-family:var(--cond);font-size:18px;font-weight:700;color:var(--text)}
+.status-strip{background:var(--surf);border-bottom:1px solid var(--border);padding:10px 28px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.status-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:3px;font-family:var(--cond);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;border:1px solid}
+.status-done{background:var(--green-bg);color:var(--green);border-color:#c3e0cf}
+.status-loading{background:var(--amber-bg);color:var(--amber);border-color:#f0dfa8}
+.status-error{background:var(--red-bg);color:var(--red);border-color:#f5cece}
+.wa-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:3px;font-family:var(--cond);font-size:11px;font-weight:600;background:#eaf7ee;color:var(--green);border:1px solid #c3e0cf}
+.tab-bar{display:flex;background:var(--surf);border-bottom:1px solid var(--border);padding:0 28px;overflow-x:auto}
+.tab-btn{font-family:var(--cond);font-size:12px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;padding:11px 18px;border:none;background:none;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;transition:.15s;white-space:nowrap}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--text);border-bottom-color:var(--text)}
+.content{padding:24px 28px}
+.sheet-panel{display:none}
+.sheet-panel.active{display:block}
+.summary-strip{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+.sum-card{background:var(--surf);border:1px solid var(--border);border-radius:5px;padding:10px 14px;flex:1;min-width:110px}
+.sum-label{font-family:var(--cond);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.sum-val{font-family:var(--cond);font-size:22px;font-weight:700;color:var(--text);line-height:1}
+.sum-sub{font-size:10px;color:var(--muted);margin-top:2px}
+.section-header{margin-bottom:12px}
+.section-header h2{font-family:var(--cond);font-size:18px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.section-header p{font-size:11px;color:var(--muted);margin-top:2px}
+.tbl-outer{overflow-x:auto;border:1px solid var(--border);border-radius:5px;background:var(--surf);margin-bottom:20px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+.th-broker{background:var(--text);color:#fff}
+.th-broker th{padding:7px 10px;text-align:center;font-family:var(--cond);font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;border-right:1px solid rgba(255,255,255,.1)}
+.th-broker th:first-child{text-align:left;border-right:1px solid rgba(255,255,255,.15);background:rgba(0,0,0,.2)}
+.th-sub{background:#f8f7f4}
+.th-sub th{padding:5px 10px;text-align:center;font-family:var(--cond);font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);border-right:1px solid var(--border)}
+.th-sub th:first-child{text-align:left}
+tbody tr{border-bottom:1px solid var(--border);transition:background .1s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:#faf9f6}
+td{padding:6px 10px;text-align:center;font-family:var(--cond);font-size:12px;font-weight:500;border-right:1px solid var(--border);white-space:nowrap}
+td:last-child{border-right:none}
+td.pair-col{text-align:left;font-family:var(--semi);font-size:12px;font-weight:600;color:var(--text);background:#faf9f6;border-right:1px solid var(--border2);min-width:100px}
+.cat-row td{background:#f0efe9;color:var(--muted);font-family:var(--cond);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px}
+.footer-row td{background:#f8f7f4;font-family:var(--cond);font-size:10px;font-weight:600;letter-spacing:.06em;color:var(--muted);padding:5px 10px;border-top:1px solid var(--border2)}
+.pos{color:var(--green)}.neg{color:var(--red)}.zero{color:#bbb}.na{color:#ccc}
+.badge{display:inline-block;padding:2px 7px;border-radius:3px;font-family:var(--cond);font-size:10px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.badge-max{background:var(--green-bg);color:var(--green);border:1px solid #c3e0cf}
+.badge-min{background:var(--red-bg);color:var(--red);border:1px solid #f5cece}
+.badge-pts{background:var(--blue-bg);color:var(--blue);border:1px solid #c5d5f0}
+.badge-pct{background:var(--amber-bg);color:var(--amber);border:1px solid #f0dfa8}
+.badge-curr{background:#f0f7ee;color:#2a6e44;border:1px solid #c3dfc8}
+.badge-dis{background:var(--red-bg);color:var(--red);border:1px solid #f5cece}
+.badge-other{background:#f4f3ef;color:var(--muted);border:1px solid var(--border)}
+.badge-na{color:#ccc;font-family:var(--cond);font-size:11px}
+.day-badge{display:inline-block;padding:2px 7px;border-radius:3px;background:#f0efe9;color:var(--muted);font-family:var(--cond);font-size:10px;font-weight:600;border:1px solid var(--border)}
+.sheet2-wrap{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.sheet2-label{font-family:var(--cond);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.sheet3-wrap{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.maxmin-card{background:var(--surf);border:1px solid var(--border);border-radius:5px;overflow:hidden}
+.maxmin-head{padding:9px 14px;font-family:var(--cond);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff}
+.maxmin-head.long{background:var(--green)}
+.maxmin-head.short{background:var(--red)}
+.maxmin-row{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;border-bottom:1px solid var(--border)}
+.maxmin-row:last-child{border-bottom:none}
+.maxmin-pair{font-family:var(--semi);font-size:13px;font-weight:600}
+.maxmin-badges{display:flex;gap:6px}
+.history-table{width:100%;border-collapse:collapse;font-size:12px;background:var(--surf);border:1px solid var(--border);border-radius:5px;overflow:hidden}
+.history-table th{padding:7px 12px;text-align:left;font-family:var(--cond);font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);background:#f8f7f4;border-bottom:1px solid var(--border)}
+.history-table td{padding:7px 12px;border-bottom:1px solid var(--border);font-family:var(--cond);font-size:12px}
+.history-table tr:last-child td{border-bottom:none}
+.loading-screen{display:flex;align-items:center;justify-content:center;height:60vh;flex-direction:column;gap:16px}
+.loading-spinner{width:32px;height:32px;border:2px solid var(--border);border-top-color:var(--text);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-family:var(--cond);font-size:13px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.date-picker{display:flex;align-items:center;gap:8px;margin-left:auto}
+.date-select{font-family:var(--cond);font-size:12px;padding:5px 10px;border:1px solid var(--border);border-radius:3px;background:var(--surf);color:var(--text);cursor:pointer}
+@media(max-width:768px){.page{grid-template-columns:1fr}.sidebar{display:none}.sheet2-wrap,.sheet3-wrap{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="page">
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-tag">Forex Swap System</div>
+    <div class="brand-title">BÁO CÁO<br>SWAP</div>
+    <div class="brand-date" id="sidebarDate">--/--/----</div>
+  </div>
+  <nav class="nav">
+    <div class="nav-section">Báo cáo</div>
+    <a href="#" onclick="showTab(0,this);return false" class="active">Chênh Lệch Swap <span class="num">01</span></a>
+    <a href="#" onclick="showTab(1,this);return false">Max-Min Swap <span class="num">02</span></a>
+    <a href="#" onclick="showTab(2,this);return false">Sàn Max-Min <span class="num">03</span></a>
+    <a href="#" onclick="showTab(3,this);return false">3Day & Type <span class="num">04</span></a>
+    <div class="nav-section" style="margin-top:8px">Hệ thống</div>
+    <a href="#" onclick="showTab(4,this);return false">Lịch sử <span class="num">↓</span></a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="stat-row"><span class="stat-label">Sàn</span><span class="stat-val">7</span></div>
+    <div class="stat-row"><span class="stat-label">Cặp tiền</span><span class="stat-val">22</span></div>
+    <div class="stat-row"><span class="stat-label">Live</span><span class="stat-val" style="color:#4ade80;font-size:12px">● Online</span></div>
+  </div>
+</aside>
+
+<main style="overflow:hidden">
+  <div class="topbar">
+    <div class="topbar-title">BaoCao_Swap_<span id="topbarDate">--</span>.xlsx</div>
+    <div class="clock" id="clock">--:--:--</div>
+  </div>
+
+  <div class="status-strip">
+    <div id="reportStatus" class="status-badge status-loading">⏳ Đang tải...</div>
+    <div id="waStatus" style="display:none" class="wa-badge">✓ WhatsApp đã gửi</div>
+    <div class="date-picker">
+      <span style="font-family:var(--cond);font-size:11px;color:var(--muted)">Xem ngày:</span>
+      <select class="date-select" id="dateSelect" onchange="loadReport(this.value)">
+        <option>Đang tải...</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="showTab(0,this)">01 — Chênh Lệch</button>
+    <button class="tab-btn" onclick="showTab(1,this)">02 — Max-Min</button>
+    <button class="tab-btn" onclick="showTab(2,this)">03 — Sàn Max-Min</button>
+    <button class="tab-btn" onclick="showTab(3,this)">04 — 3Day & Type</button>
+    <button class="tab-btn" onclick="showTab(4,this)">Lịch sử</button>
+  </div>
+
+  <div class="content">
+    <div class="summary-strip">
+      <div class="sum-card"><div class="sum-label">Tổng sàn</div><div class="sum-val">7</div><div class="sum-sub">Vantage · Think · Go · Exness · Tickmill · XM · FOREX</div></div>
+      <div class="sum-card"><div class="sum-label">Cặp tiền</div><div class="sum-val">22</div><div class="sum-sub">Forex + Index + Commodity</div></div>
+      <div class="sum-card"><div class="sum-label">Báo cáo</div><div class="sum-val" id="sumDate" style="font-size:14px;color:var(--muted)">--</div><div class="sum-sub">Cập nhật tự động</div></div>
+      <div class="sum-card"><div class="sum-label">WhatsApp</div><div class="sum-val" id="sumWA" style="font-size:14px;color:var(--muted)">--</div><div class="sum-sub">Gửi sau khi báo cáo xong</div></div>
+    </div>
+
+    <div id="tab0" class="sheet-panel active">
+      <div class="section-header"><h2>Bảng Chênh Lệch Swap</h2><p>Thay đổi swap long & short theo từng sàn</p></div>
+      <div class="tbl-outer"><table>
+        <thead>
+          <tr class="th-broker"><th style="min-width:100px">Cặp tiền</th><th colspan="2">Vantage</th><th colspan="2">ThinkMarkets</th><th colspan="2">GoMarkets</th><th colspan="2">Exness</th><th colspan="2">Tickmill</th><th colspan="2">XM</th><th colspan="2">FOREX</th></tr>
+          <tr class="th-sub"><th></th><th>Long</th><th>Short</th><th>Long</th><th>Short</th><th>Long</th><th>Short</th><th>Long</th><th>Short</th><th>Long</th><th>Short</th><th>Long</th><th>Short</th><th>Long</th><th>Short</th></tr>
+        </thead>
+        <tbody id="t1body"><tr><td colspan="15" class="loading-screen"><div class="loading-spinner"></div></td></tr></tbody>
+      </table></div>
+    </div>
+
+    <div id="tab1" class="sheet-panel">
+      <div class="section-header"><h2>Bảng Swap Lớn Nhất / Nhỏ Nhất</h2><p>Giá trị swap long và short theo từng sàn</p></div>
+      <div class="sheet2-wrap">
+        <div><div class="sheet2-label" style="color:var(--green)">▲ Swap Long</div>
+          <div class="tbl-outer"><table><thead><tr class="th-broker"><th>Cặp tiền</th><th>Vantage</th><th>Think</th><th>Go</th><th>Exness</th><th>Tickmill</th><th>XM</th><th>FOREX</th></tr></thead><tbody id="t2long"></tbody></table></div>
+        </div>
+        <div><div class="sheet2-label" style="color:var(--red)">▼ Swap Short</div>
+          <div class="tbl-outer"><table><thead><tr class="th-broker"><th>Cặp tiền</th><th>Vantage</th><th>Think</th><th>Go</th><th>Exness</th><th>Tickmill</th><th>XM</th><th>FOREX</th></tr></thead><tbody id="t2short"></tbody></table></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab2" class="sheet-panel">
+      <div class="section-header"><h2>Sàn Max – Min</h2><p>Sàn tốt nhất & tệ nhất cho từng cặp tiền quan trọng</p></div>
+      <div class="sheet3-wrap" id="sheet3content"><div class="loading-spinner"></div></div>
+    </div>
+
+    <div id="tab3" class="sheet-panel">
+      <div class="section-header"><h2>3Day Swap & Swap Type</h2><p>Ngày tính 3× swap và phương thức tính của từng sàn</p></div>
+      <div class="tbl-outer"><table>
+        <thead>
+          <tr class="th-broker"><th>Cặp tiền</th><th colspan="2">Vantage</th><th colspan="2">ThinkMarkets</th><th colspan="2">GoMarkets</th><th colspan="2">Exness</th><th colspan="2">Tickmill</th><th colspan="2">XM</th><th colspan="2">FOREX</th></tr>
+          <tr class="th-sub"><th></th><th>3Day</th><th>Type</th><th>3Day</th><th>Type</th><th>3Day</th><th>Type</th><th>3Day</th><th>Type</th><th>3Day</th><th>Type</th><th>3Day</th><th>Type</th><th>3Day</th><th>Type</th></tr>
+        </thead>
+        <tbody id="t4body"></tbody>
+      </table></div>
+    </div>
+
+    <div id="tab4" class="sheet-panel">
+      <div class="section-header"><h2>Lịch sử báo cáo</h2><p>Tất cả báo cáo đã tạo</p></div>
+      <table class="history-table">
+        <thead><tr><th>Ngày</th><th>Trạng thái</th><th>WhatsApp</th><th>Giờ tạo</th></tr></thead>
+        <tbody id="historyBody"><tr><td colspan="4" style="text-align:center;padding:24px;color:var(--muted)">Đang tải...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</main>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://dibokhtcxcehwxdykdeh.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_qbyD2NYEE8pCCM3ArsOJiw_hLM7qB3z';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const FOREX_PAIRS = ['USO/USD','USD/JPY','XAU/USD','EUR/USD','AUD/NZD','USD/MXN','AUD/CAD','GBP.NZD','GBP.JPY','CHF.JPY','CADJPY','EUR.JPY'];
+
+// clock
+setInterval(() => {
+  const n = new Date();
+  document.getElementById('clock').textContent = n.toLocaleTimeString('vi-VN');
+  document.getElementById('sidebarDate').textContent = n.toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric'});
+}, 1000);
+
+function showTab(idx, btn) {
+  document.querySelectorAll('.sheet-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn,.nav a').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab'+idx).classList.add('active');
+  if(btn) btn.classList.add('active');
+}
+
+function fv(v) {
+  if(!v||v===''||v==='x'||v==='None') return `<span class="na">—</span>`;
+  const n = parseFloat(v);
+  if(isNaN(n)) return `<span class="na">${v}</span>`;
+  if(n===0) return `<span class="zero">0</span>`;
+  return `<span class="${n>0?'pos':'neg'}">${n>0?'+':''}${n.toFixed(2)}</span>`;
+}
+function typeBadge(t) {
+  if(!t||t==='N/A'||t==='None') return `<span class="badge-na">N/A</span>`;
+  if(t.includes('points')) return `<span class="badge badge-pts">points</span>`;
+  if(t.includes('percentage')||t.includes('pct')) return `<span class="badge badge-pct">%</span>`;
+  if(t.includes('currency')) return `<span class="badge badge-curr">curr</span>`;
+  if(t.includes('Disabled')) return `<span class="badge badge-dis">disabled</span>`;
+  if(t.includes('Other')) return `<span class="badge badge-other">other</span>`;
+  return `<span class="badge-na">${t}</span>`;
+}
+function dayBadge(d) {
+  if(!d||d==='N/A'||d==='None') return `<span class="badge-na">—</span>`;
+  return `<span class="day-badge">${d}</span>`;
+}
+
+function renderData(data) {
+  if(!data) return;
+  const sheets = Object.values(data);
+
+  // Sheet 1
+  if(sheets[0]) {
+    const rows = sheets[0].filter(r => r[0] && !r[0].includes('BẢNG') && !r[0].includes('Tên') && !r[0].includes('Daily') && !r[0].includes('Không') && r[0]!=='');
+    const t1 = document.getElementById('t1body');
+    t1.innerHTML = '';
+    let lastCat = '';
+    rows.forEach(row => {
+      const pair = row[0];
+      const cat = FOREX_PAIRS.includes(pair) ? 'Forex & Commodity' : 'Indices';
+      if(cat!==lastCat){lastCat=cat;t1.innerHTML+=`<tr class="cat-row"><td colspan="15">${cat}</td></tr>`;}
+      t1.innerHTML+=`<tr><td class="pair-col">${pair}</td>${row.slice(1,15).map(v=>`<td>${fv(v)}</td>`).join('')}</tr>`;
+    });
+    const fr = sheets[0].find(r => r[0]==='' && r.some(c=>c&&(c.includes('Daily')||c.includes('Không'))));
+    if(fr){let c='';for(let i=0;i<14;i+=2)c+=`<td colspan="2">${fr[i+1]||''}</td>`;t1.innerHTML+=`<tr class="footer-row"><td class="pair-col" style="background:#f0efe9">Biến động</td>${c}</tr>`;}
+  }
+
+  // Sheet 2
+  if(sheets[1]) {
+    const allRows = sheets[1].filter(r=>r[0]&&!r[0].includes('BẢNG')&&!r[0].includes('Tên')&&r[0]!==''&&r[1]!=='Swap long');
+    ['t2long','t2short'].forEach((id,si)=>{
+      const tbody=document.getElementById(id); tbody.innerHTML=''; let lastCat='';
+      allRows.forEach(row=>{
+        const pair=row[0]; if(!pair)return;
+        const cat=FOREX_PAIRS.includes(pair)?'Forex & Commodity':'Indices';
+        if(cat!==lastCat){lastCat=cat;tbody.innerHTML+=`<tr class="cat-row"><td colspan="8">${cat}</td></tr>`;}
+        const start=si===0?1:9;
+        tbody.innerHTML+=`<tr><td class="pair-col">${pair}</td>${row.slice(start,start+7).map(v=>`<td>${fv(v)}</td>`).join('')}</tr>`;
+      });
+    });
+  }
+
+  // Sheet 3
+  if(sheets[2]) {
+    const rows=sheets[2].filter(r=>r[1]&&r[1]!=='Cặp tiền'&&r[1]!=='');
+    const longRows=[],shortRows=[];
+    rows.forEach(r=>{if(r[2])longRows.push({pair:r[1],max:r[2],min:r[3]});if(r[7])shortRows.push({pair:r[7],max:r[8],min:r[9]});});
+    document.getElementById('sheet3content').innerHTML=`
+      <div class="maxmin-card"><div class="maxmin-head long">▲ Swap Long — Max & Min</div>
+        ${longRows.map(r=>`<div class="maxmin-row"><span class="maxmin-pair">${r.pair}</span><div class="maxmin-badges"><span class="badge badge-max">Max: ${r.max}</span><span class="badge badge-min">Min: ${r.min}</span></div></div>`).join('')}
+      </div>
+      <div class="maxmin-card"><div class="maxmin-head short">▼ Swap Short — Max & Min</div>
+        ${shortRows.map(r=>`<div class="maxmin-row"><span class="maxmin-pair">${r.pair}</span><div class="maxmin-badges"><span class="badge badge-max">Max: ${r.max}</span><span class="badge badge-min">Min: ${r.min}</span></div></div>`).join('')}
+      </div>`;
+  }
+
+  // Sheet 4
+  if(sheets[3]) {
+    const rows=sheets[3].filter(r=>r[0]&&!r[0].includes('3DAY')&&!r[0].includes('Tên')&&r[0]!=='');
+    const t4=document.getElementById('t4body'); t4.innerHTML=''; let lastCat='';
+    rows.forEach(row=>{
+      const pair=row[0];
+      const cat=FOREX_PAIRS.includes(pair)?'Forex & Commodity':'Indices';
+      if(cat!==lastCat){lastCat=cat;t4.innerHTML+=`<tr class="cat-row"><td colspan="15">${cat}</td></tr>`;}
+      let cells='';
+      for(let i=1;i<=14;i+=2)cells+=`<td>${dayBadge(row[i])}</td><td>${typeBadge(row[i+1])}</td>`;
+      t4.innerHTML+=`<tr><td class="pair-col">${pair}</td>${cells}</tr>`;
+    });
+  }
+}
+
+async function loadReport(date) {
+  document.getElementById('reportStatus').className='status-badge status-loading';
+  document.getElementById('reportStatus').textContent='⏳ Đang tải...';
+  try {
+    const {data,error}=await sb.from('reports').select('*').eq('date',date).single();
+    if(error||!data){
+      document.getElementById('reportStatus').className='status-badge status-error';
+      document.getElementById('reportStatus').textContent='✗ Không có báo cáo';
+      return;
+    }
+    document.getElementById('topbarDate').textContent=data.date;
+    document.getElementById('sumDate').textContent=data.date;
+    document.getElementById('sumDate').style.color='var(--text)';
+    document.getElementById('reportStatus').className='status-badge status-done';
+    document.getElementById('reportStatus').textContent='✓ Hoàn thành';
+    if(data.sent_wa){
+      document.getElementById('waStatus').style.display='inline-flex';
+      document.getElementById('sumWA').textContent='✓ ĐÃ GỬI';
+      document.getElementById('sumWA').style.color='var(--green)';
+    }
+    renderData(data.excel_data);
+  } catch(e) {
+    document.getElementById('reportStatus').className='status-badge status-error';
+    document.getElementById('reportStatus').textContent='✗ Lỗi kết nối';
+  }
+}
+
+async function loadHistory() {
+  const {data}=await sb.from('reports').select('date,status,sent_wa,created_at').order('date',{ascending:false}).limit(30);
+  if(!data) return;
+
+  // populate date select
+  const sel=document.getElementById('dateSelect');
+  sel.innerHTML=data.map(r=>`<option value="${r.date}">${r.date}</option>`).join('');
+
+  // history table
+  const tbody=document.getElementById('historyBody');
+  tbody.innerHTML=data.map(r=>`<tr>
+    <td style="font-weight:600">${r.date}</td>
+    <td><span class="status-badge ${r.status==='done'?'status-done':'status-loading'}">${r.status}</span></td>
+    <td>${r.sent_wa?'<span style="color:var(--green);font-weight:600">✓ Đã gửi</span>':'<span style="color:var(--muted)">—</span>'}</td>
+    <td style="color:var(--muted)">${r.created_at?r.created_at.substring(11,16):'—'}</td>
+  </tr>`).join('');
+
+  // load latest
+  if(data.length>0) loadReport(data[0].date);
+}
+
+loadHistory();
+</script>
+</body>
+</html>
