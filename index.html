@@ -3,9 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Báo Cáo Swap</title>
+<title>Báo Cáo Swap — 02/06/2026</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600;700&family=Barlow:wght@300;400;500;600&family=Barlow+Semi+Condensed:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{--bg:#f4f3ef;--surf:#fff;--border:#dddbd4;--border2:#c8c5bc;--text:#1a1916;--muted:#7a7770;--green:#1a6644;--green-bg:#eaf4ee;--red:#b02a2a;--red-bg:#fdf0f0;--blue:#1a3a6e;--blue-bg:#eef2fa;--amber:#7a4a00;--amber-bg:#fdf6e3;--sans:'Barlow',sans-serif;--cond:'Barlow Condensed',sans-serif;--semi:'Barlow Semi Condensed',sans-serif}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -25,20 +24,17 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13
 .nav a:hover{color:#fff;background:rgba(255,255,255,.06)}
 .nav a.active{color:#fff;border-left-color:#fff;background:rgba(255,255,255,.08)}
 .nav a .num{font-family:var(--cond);font-size:11px;color:rgba(255,255,255,.3);margin-left:auto}
-.sidebar-footer{padding:16px 20px;border-top:1px solid rgba(255,255,255,.1)}
+.sidebar-stats{padding:16px 20px;border-top:1px solid rgba(255,255,255,.1)}
 .stat-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
 .stat-label{font-size:10px;color:rgba(255,255,255,.4);font-family:var(--cond);text-transform:uppercase;letter-spacing:.08em}
 .stat-val{font-family:var(--cond);font-size:16px;font-weight:600;color:#fff}
+.main{overflow:hidden}
 .topbar{background:var(--surf);border-bottom:1px solid var(--border);padding:12px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20}
 .topbar-title{font-family:var(--cond);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 .topbar-title span{color:var(--text)}
 .clock{font-family:var(--cond);font-size:18px;font-weight:700;color:var(--text)}
-.status-strip{background:var(--surf);border-bottom:1px solid var(--border);padding:10px 28px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-.status-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:3px;font-family:var(--cond);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;border:1px solid}
-.status-done{background:var(--green-bg);color:var(--green);border-color:#c3e0cf}
-.status-loading{background:var(--amber-bg);color:var(--amber);border-color:#f0dfa8}
-.status-error{background:var(--red-bg);color:var(--red);border-color:#f5cece}
-.wa-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:3px;font-family:var(--cond);font-size:11px;font-weight:600;background:#eaf7ee;color:var(--green);border:1px solid #c3e0cf}
+.status-strip{background:var(--surf);border-bottom:1px solid var(--border);padding:8px 28px;display:flex;align-items:center;gap:12px}
+.status-done{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:3px;font-family:var(--cond);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;background:var(--green-bg);color:var(--green);border:1px solid #c3e0cf}
 .tab-bar{display:flex;background:var(--surf);border-bottom:1px solid var(--border);padding:0 28px;overflow-x:auto}
 .tab-btn{font-family:var(--cond);font-size:12px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;padding:11px 18px;border:none;background:none;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;transition:.15s;white-space:nowrap}
 .tab-btn:hover{color:var(--text)}
@@ -92,16 +88,6 @@ td.pair-col{text-align:left;font-family:var(--semi);font-size:12px;font-weight:6
 .maxmin-row:last-child{border-bottom:none}
 .maxmin-pair{font-family:var(--semi);font-size:13px;font-weight:600}
 .maxmin-badges{display:flex;gap:6px}
-.history-table{width:100%;border-collapse:collapse;font-size:12px;background:var(--surf);border:1px solid var(--border);border-radius:5px;overflow:hidden}
-.history-table th{padding:7px 12px;text-align:left;font-family:var(--cond);font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);background:#f8f7f4;border-bottom:1px solid var(--border)}
-.history-table td{padding:7px 12px;border-bottom:1px solid var(--border);font-family:var(--cond);font-size:12px}
-.history-table tr:last-child td{border-bottom:none}
-.loading-screen{display:flex;align-items:center;justify-content:center;height:60vh;flex-direction:column;gap:16px}
-.loading-spinner{width:32px;height:32px;border:2px solid var(--border);border-top-color:var(--text);border-radius:50%;animation:spin 0.8s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.loading-text{font-family:var(--cond);font-size:13px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
-.date-picker{display:flex;align-items:center;gap:8px;margin-left:auto}
-.date-select{font-family:var(--cond);font-size:12px;padding:5px 10px;border:1px solid var(--border);border-radius:3px;background:var(--surf);color:var(--text);cursor:pointer}
 @media(max-width:768px){.page{grid-template-columns:1fr}.sidebar{display:none}.sheet2-wrap,.sheet3-wrap{grid-template-columns:1fr}}
 </style>
 </head>
@@ -111,7 +97,7 @@ td.pair-col{text-align:left;font-family:var(--semi);font-size:12px;font-weight:6
   <div class="sidebar-brand">
     <div class="brand-tag">Forex Swap System</div>
     <div class="brand-title">BÁO CÁO<br>SWAP</div>
-    <div class="brand-date" id="sidebarDate">--/--/----</div>
+    <div class="brand-date">02/06/2026</div>
   </div>
   <nav class="nav">
     <div class="nav-section">Báo cáo</div>
@@ -119,62 +105,53 @@ td.pair-col{text-align:left;font-family:var(--semi);font-size:12px;font-weight:6
     <a href="#" onclick="showTab(1,this);return false">Max-Min Swap <span class="num">02</span></a>
     <a href="#" onclick="showTab(2,this);return false">Sàn Max-Min <span class="num">03</span></a>
     <a href="#" onclick="showTab(3,this);return false">3Day & Type <span class="num">04</span></a>
-    <div class="nav-section" style="margin-top:8px">Hệ thống</div>
-    <a href="#" onclick="showTab(4,this);return false">Lịch sử <span class="num">↓</span></a>
   </nav>
-  <div class="sidebar-footer">
+  <div class="sidebar-stats">
     <div class="stat-row"><span class="stat-label">Sàn</span><span class="stat-val">7</span></div>
     <div class="stat-row"><span class="stat-label">Cặp tiền</span><span class="stat-val">22</span></div>
     <div class="stat-row"><span class="stat-label">Live</span><span class="stat-val" style="color:#4ade80;font-size:12px">● Online</span></div>
   </div>
 </aside>
 
-<main style="overflow:hidden">
+<main class="main">
   <div class="topbar">
-    <div class="topbar-title">BaoCao_Swap_<span id="topbarDate">--</span>.xlsx</div>
+    <div class="topbar-title">BaoCao_Swap_<span>2026-06-02</span>.xlsx</div>
     <div class="clock" id="clock">--:--:--</div>
   </div>
-
   <div class="status-strip">
-    <div id="reportStatus" class="status-badge status-loading">⏳ Đang tải...</div>
-    <div id="waStatus" style="display:none" class="wa-badge">✓ WhatsApp đã gửi</div>
-    <div class="date-picker">
-      <span style="font-family:var(--cond);font-size:11px;color:var(--muted)">Xem ngày:</span>
-      <select class="date-select" id="dateSelect" onchange="loadReport(this.value)">
-        <option>Đang tải...</option>
-      </select>
-    </div>
+    <span class="status-done">✓ Hoàn thành</span>
+    <span style="font-family:var(--cond);font-size:11px;color:var(--muted)">Xem ngày: <strong>2026-06-02</strong></span>
   </div>
-
   <div class="tab-bar">
     <button class="tab-btn active" onclick="showTab(0,this)">01 — Chênh Lệch</button>
     <button class="tab-btn" onclick="showTab(1,this)">02 — Max-Min</button>
     <button class="tab-btn" onclick="showTab(2,this)">03 — Sàn Max-Min</button>
     <button class="tab-btn" onclick="showTab(3,this)">04 — 3Day & Type</button>
-    <button class="tab-btn" onclick="showTab(4,this)">Lịch sử</button>
   </div>
 
   <div class="content">
     <div class="summary-strip">
       <div class="sum-card"><div class="sum-label">Tổng sàn</div><div class="sum-val">7</div><div class="sum-sub">Vantage · Think · Go · Exness · Tickmill · XM · FOREX</div></div>
       <div class="sum-card"><div class="sum-label">Cặp tiền</div><div class="sum-val">22</div><div class="sum-sub">Forex + Index + Commodity</div></div>
-      <div class="sum-card"><div class="sum-label">Báo cáo</div><div class="sum-val" id="sumDate" style="font-size:14px;color:var(--muted)">--</div><div class="sum-sub">Cập nhật tự động</div></div>
-      <div class="sum-card"><div class="sum-label">WhatsApp</div><div class="sum-val" id="sumWA" style="font-size:14px;color:var(--muted)">--</div><div class="sum-sub">Gửi sau khi báo cáo xong</div></div>
+      <div class="sum-card"><div class="sum-label">Báo cáo</div><div class="sum-val" style="font-size:16px">2026-06-02</div><div class="sum-sub">Cập nhật tự động</div></div>
+      <div class="sum-card"><div class="sum-label">WhatsApp</div><div class="sum-val" style="font-size:14px;color:var(--muted)">—</div><div class="sum-sub">Gửi sau khi báo cáo xong</div></div>
     </div>
 
+    <!-- SHEET 1 -->
     <div id="tab0" class="sheet-panel active">
-      <div class="section-header"><h2>Bảng Chênh Lệch Swap</h2><p>Thay đổi swap long & short theo từng sàn</p></div>
+      <div class="section-header"><h2>Bảng Chênh Lệch Swap</h2><p>Thay đổi swap long & short theo từng sàn — 02/06/2026</p></div>
       <div class="tbl-outer"><table>
         <thead>
           <tr class="th-broker"><th style="min-width:100px">Cặp tiền</th><th colspan="2">Vantage</th><th colspan="2">ThinkMarkets</th><th colspan="2">GoMarkets</th><th colspan="2">Exness</th><th colspan="2">Tickmill</th><th colspan="2">XM</th><th colspan="2">FOREX</th></tr>
           <tr class="th-sub"><th></th><th>Long</th><th>Short</th><th>Long</th><th>Short</th><th>Long</th><th>Short</th><th>Long</th><th>Short</th><th>Long</th><th>Short</th><th>Long</th><th>Short</th><th>Long</th><th>Short</th></tr>
         </thead>
-        <tbody id="t1body"><tr><td colspan="15" class="loading-screen"><div class="loading-spinner"></div></td></tr></tbody>
+        <tbody id="t1body"></tbody>
       </table></div>
     </div>
 
+    <!-- SHEET 2 -->
     <div id="tab1" class="sheet-panel">
-      <div class="section-header"><h2>Bảng Swap Lớn Nhất / Nhỏ Nhất</h2><p>Giá trị swap long và short theo từng sàn</p></div>
+      <div class="section-header"><h2>Bảng Swap Lớn Nhất / Nhỏ Nhất</h2><p>Giá trị swap long và short theo từng sàn — 02/06/2026</p></div>
       <div class="sheet2-wrap">
         <div><div class="sheet2-label" style="color:var(--green)">▲ Swap Long</div>
           <div class="tbl-outer"><table><thead><tr class="th-broker"><th>Cặp tiền</th><th>Vantage</th><th>Think</th><th>Go</th><th>Exness</th><th>Tickmill</th><th>XM</th><th>FOREX</th></tr></thead><tbody id="t2long"></tbody></table></div>
@@ -185,13 +162,28 @@ td.pair-col{text-align:left;font-family:var(--semi);font-size:12px;font-weight:6
       </div>
     </div>
 
+    <!-- SHEET 3 -->
     <div id="tab2" class="sheet-panel">
       <div class="section-header"><h2>Sàn Max – Min</h2><p>Sàn tốt nhất & tệ nhất cho từng cặp tiền quan trọng</p></div>
-      <div class="sheet3-wrap" id="sheet3content"><div class="loading-spinner"></div></div>
+      <div class="sheet3-wrap">
+        <div class="maxmin-card">
+          <div class="maxmin-head long">▲ Swap Long — Max & Min</div>
+          <div class="maxmin-row"><span class="maxmin-pair">XAUUSD</span><div class="maxmin-badges"><span class="badge badge-max">Max: FOREX</span><span class="badge badge-min">Min: Exness</span></div></div>
+          <div class="maxmin-row"><span class="maxmin-pair">USDJPY</span><div class="maxmin-badges"><span class="badge badge-max">Max: Tickmill</span><span class="badge badge-min">Min: Exness</span></div></div>
+          <div class="maxmin-row"><span class="maxmin-pair">USOUSD</span><div class="maxmin-badges"><span class="badge badge-max">Max: GoMarkets</span><span class="badge badge-min">Min: Exness + XM</span></div></div>
+        </div>
+        <div class="maxmin-card">
+          <div class="maxmin-head short">▼ Swap Short — Max & Min</div>
+          <div class="maxmin-row"><span class="maxmin-pair">XAUUSD</span><div class="maxmin-badges"><span class="badge badge-max">Max: GoMarkets</span><span class="badge badge-min">Min: Exness</span></div></div>
+          <div class="maxmin-row"><span class="maxmin-pair">USDJPY</span><div class="maxmin-badges"><span class="badge badge-max">Max: FOREX</span><span class="badge badge-min">Min: XM</span></div></div>
+          <div class="maxmin-row"><span class="maxmin-pair">USOUSD</span><div class="maxmin-badges"><span class="badge badge-max">Max: XM</span><span class="badge badge-min">Min: Vantage</span></div></div>
+        </div>
+      </div>
     </div>
 
+    <!-- SHEET 4 -->
     <div id="tab3" class="sheet-panel">
-      <div class="section-header"><h2>3Day Swap & Swap Type</h2><p>Ngày tính 3× swap và phương thức tính của từng sàn</p></div>
+      <div class="section-header"><h2>3Day Swap & Swap Type</h2><p>Ngày tính 3× swap và phương thức tính của từng sàn — 02/06/2026</p></div>
       <div class="tbl-outer"><table>
         <thead>
           <tr class="th-broker"><th>Cặp tiền</th><th colspan="2">Vantage</th><th colspan="2">ThinkMarkets</th><th colspan="2">GoMarkets</th><th colspan="2">Exness</th><th colspan="2">Tickmill</th><th colspan="2">XM</th><th colspan="2">FOREX</th></tr>
@@ -200,219 +192,177 @@ td.pair-col{text-align:left;font-family:var(--semi);font-size:12px;font-weight:6
         <tbody id="t4body"></tbody>
       </table></div>
     </div>
-
-    <div id="tab4" class="sheet-panel">
-      <div class="section-header"><h2>Lịch sử báo cáo</h2><p>Tất cả báo cáo đã tạo</p></div>
-      <table class="history-table">
-        <thead><tr><th>Ngày</th><th>Trạng thái</th><th>WhatsApp</th><th>Giờ tạo</th></tr></thead>
-        <tbody id="historyBody"><tr><td colspan="4" style="text-align:center;padding:24px;color:var(--muted)">Đang tải...</td></tr></tbody>
-      </table>
-    </div>
   </div>
 </main>
 </div>
 
 <script>
-const SUPABASE_URL = 'https://dibokhtcxcehwxdykdeh.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_qbyD2NYEE8pCCM3ArsOJiw_hLM7qB3z';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+setInterval(()=>{document.getElementById('clock').textContent=new Date().toLocaleTimeString('vi-VN');},1000);
 
-const FOREX_PAIRS = ['USO/USD','USD/JPY','XAU/USD','EUR/USD','AUD/NZD','USD/MXN','AUD/CAD','GBP.NZD','GBP.JPY','CHF.JPY','CADJPY','EUR.JPY'];
-
-// clock
-setInterval(() => {
-  const n = new Date();
-  document.getElementById('clock').textContent = n.toLocaleTimeString('vi-VN');
-  document.getElementById('sidebarDate').textContent = n.toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric'});
-}, 1000);
-
-function showTab(idx, btn) {
-  document.querySelectorAll('.sheet-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn,.nav a').forEach(b => b.classList.remove('active'));
+function showTab(idx,btn){
+  document.querySelectorAll('.sheet-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn,.nav a').forEach(b=>b.classList.remove('active'));
   document.getElementById('tab'+idx).classList.add('active');
-  if(btn) btn.classList.add('active');
+  if(btn)btn.classList.add('active');
 }
 
-function fv(v) {
-  if(!v||v===''||v==='x'||v==='None') return `<span class="na">—</span>`;
-  const n = parseFloat(v);
-  if(isNaN(n)) return `<span class="na">${v}</span>`;
-  if(n===0) return `<span class="zero">0</span>`;
-  return `<span class="${n>0?'pos':'neg'}">${n>0?'+':''}${n.toFixed(2)}</span>`;
+function fv(v){
+  if(v===null||v===undefined||v==='x'||v==='')return`<span class="na">—</span>`;
+  const n=parseFloat(v);
+  if(isNaN(n))return`<span class="na">${v}</span>`;
+  if(n===0)return`<span class="zero">0</span>`;
+  return`<span class="${n>0?'pos':'neg'}">${n>0?'+':''}${n.toFixed(2)}</span>`;
 }
-function typeBadge(t) {
-  if(!t||t==='N/A'||t==='None') return `<span class="badge-na">N/A</span>`;
-  if(t.includes('points')) return `<span class="badge badge-pts">points</span>`;
-  if(t.includes('percentage')||t.includes('pct')) return `<span class="badge badge-pct">%</span>`;
-  if(t.includes('currency')) return `<span class="badge badge-curr">curr</span>`;
-  if(t.includes('Disabled')) return `<span class="badge badge-dis">disabled</span>`;
-  if(t.includes('Other')) return `<span class="badge badge-other">other</span>`;
-  return `<span class="badge-na">${t}</span>`;
+function typeBadge(t){
+  if(!t||t==='N/A')return`<span class="badge-na">N/A</span>`;
+  if(t.includes('points'))return`<span class="badge badge-pts">points</span>`;
+  if(t.includes('percentage'))return`<span class="badge badge-pct">%</span>`;
+  if(t.includes('currency'))return`<span class="badge badge-curr">curr</span>`;
+  if(t.includes('Disabled'))return`<span class="badge badge-dis">disabled</span>`;
+  if(t.includes('Other'))return`<span class="badge badge-other">other</span>`;
+  return`<span class="badge-na">${t}</span>`;
 }
-function dayBadge(d) {
-  if(!d||d==='N/A'||d==='None') return `<span class="badge-na">—</span>`;
-  return `<span class="day-badge">${d}</span>`;
-}
-
-function renderData(data) {
-  if(!data) return;
-  const sheets = Object.values(data);
-
-  // ── SHEET 1: Chênh Lệch Swap ──
-  // Cấu trúc: [pair, vantage_long, vantage_short, think_long, think_short, go_long, go_short,
-  //            exness_long, exness_short, tick_long, tick_short, xm_long, xm_short, forex_long, forex_short]
-  if(sheets[0]) {
-    const SKIP1 = ['BẢNG','Tên sàn','Swap long','Daily','Không biến động'];
-    const rows = sheets[0].filter(r => {
-      if(!r[0] && !r[1]) return false;
-      const p = String(r[0] || '');
-      return p && !SKIP1.some(s => p.includes(s));
-    });
-    const t1 = document.getElementById('t1body');
-    t1.innerHTML = '';
-    let lastCat = '';
-    rows.forEach(row => {
-      const pair = row[0];
-      if(!pair) return;
-      const cat = FOREX_PAIRS.includes(pair) ? 'Forex & Commodity' : 'Indices';
-      if(cat !== lastCat) { lastCat = cat; t1.innerHTML += `<tr class="cat-row"><td colspan="15">${cat}</td></tr>`; }
-      t1.innerHTML += `<tr><td class="pair-col">${pair}</td>${row.slice(1,15).map(v=>`<td>${fv(v)}</td>`).join('')}</tr>`;
-    });
-    // Footer: dòng có null/'' ở col[0] và có text Daily/Không ở các cột khác
-    const fr = sheets[0].find(r => (!r[0] || r[0] === '') && r.some(c => c && (String(c).includes('Daily') || String(c).includes('Không'))));
-    if(fr) {
-      let c = '';
-      [1,3,5,7,9,11,13].forEach(i => { c += `<td colspan="2">${fr[i] || ''}</td>`; });
-      t1.innerHTML += `<tr class="footer-row"><td class="pair-col" style="background:#f0efe9">Biến động</td>${c}</tr>`;
-    }
-  }
-
-  // ── SHEET 2: Max-Min Swap ──
-  // Cấu trúc mỗi row: [pair_l, vantage_l, think_l, go_l, exness_l, tick_l, xm_l, forex_l, null,
-  //                     pair_s, vantage_s, think_s, go_s, exness_s, tick_s, xm_s, forex_s, null, null]
-  if(sheets[1]) {
-    const SKIP2 = ['BẢNG','Tên sàn','Swap long','Swap short'];
-    const allRows = sheets[1].filter(r => {
-      const p = String(r[0] || '');
-      return p && !SKIP2.some(s => p.includes(s));
-    });
-
-    // Long table: pair=col[0], values=col[1..7]
-    const t2l = document.getElementById('t2long'); t2l.innerHTML = ''; let lastCatL = '';
-    allRows.forEach(row => {
-      const pair = row[0]; if(!pair) return;
-      const cat = FOREX_PAIRS.includes(pair) ? 'Forex & Commodity' : 'Indices';
-      if(cat !== lastCatL) { lastCatL = cat; t2l.innerHTML += `<tr class="cat-row"><td colspan="8">${cat}</td></tr>`; }
-      t2l.innerHTML += `<tr><td class="pair-col">${pair}</td>${row.slice(1,8).map(v=>`<td>${fv(v)}</td>`).join('')}</tr>`;
-    });
-
-    // Short table: pair=col[9], values=col[10..16]
-    const t2s = document.getElementById('t2short'); t2s.innerHTML = ''; let lastCatS = '';
-    allRows.forEach(row => {
-      const pair = row[9]; if(!pair) return;
-      const cat = FOREX_PAIRS.includes(pair) ? 'Forex & Commodity' : 'Indices';
-      if(cat !== lastCatS) { lastCatS = cat; t2s.innerHTML += `<tr class="cat-row"><td colspan="8">${cat}</td></tr>`; }
-      t2s.innerHTML += `<tr><td class="pair-col">${pair}</td>${row.slice(10,17).map(v=>`<td>${fv(v)}</td>`).join('')}</tr>`;
-    });
-  }
-
-  // ── SHEET 3: Sàn Max-Min ──
-  // Cấu trúc: [null, pair_long, max_long, min_long, null, null, null, pair_short, max_short, min_short]
-  // Bỏ 2 dòng header đầu ('Swap Long', 'Cặp tiền')
-  if(sheets[2]) {
-    const SKIP3 = ['Swap Long','Swap Short','Cặp tiền'];
-    const rows = sheets[2].filter(r => {
-      const v = String(r[1] || r[7] || '');
-      return v && !SKIP3.includes(v);
-    });
-    const longRows = [], shortRows = [];
-    rows.forEach(r => {
-      if(r[1] && r[2]) longRows.push({ pair: r[1], max: r[2], min: r[3] });
-      if(r[7] && r[8]) shortRows.push({ pair: r[7], max: r[8], min: r[9] });
-    });
-    document.getElementById('sheet3content').innerHTML = `
-      <div class="maxmin-card">
-        <div class="maxmin-head long">▲ Swap Long — Max & Min</div>
-        ${longRows.map(r=>`<div class="maxmin-row"><span class="maxmin-pair">${r.pair}</span><div class="maxmin-badges"><span class="badge badge-max">Max: ${r.max}</span><span class="badge badge-min">Min: ${r.min}</span></div></div>`).join('')}
-      </div>
-      <div class="maxmin-card">
-        <div class="maxmin-head short">▼ Swap Short — Max & Min</div>
-        ${shortRows.map(r=>`<div class="maxmin-row"><span class="maxmin-pair">${r.pair}</span><div class="maxmin-badges"><span class="badge badge-max">Max: ${r.max}</span><span class="badge badge-min">Min: ${r.min}</span></div></div>`).join('')}
-      </div>`;
-  }
-
-  // ── SHEET 4: 3Day Swap & Type ──
-  // Cấu trúc: [pair, vantage_3day, vantage_type, think_3day, think_type, go_3day, go_type,
-  //            exness_3day, exness_type, tick_3day, tick_type, xm_3day, xm_type, forex_3day, forex_type]
-  if(sheets[3]) {
-    const SKIP4 = ['3DAY','Tên sàn'];
-    const rows = sheets[3].filter(r => {
-      const p = String(r[0] || '');
-      return p && !SKIP4.some(s => p.includes(s));
-    });
-    const t4 = document.getElementById('t4body'); t4.innerHTML = ''; let lastCat = '';
-    rows.forEach(row => {
-      const pair = row[0];
-      const cat = FOREX_PAIRS.includes(pair) ? 'Forex & Commodity' : 'Indices';
-      if(cat !== lastCat) { lastCat = cat; t4.innerHTML += `<tr class="cat-row"><td colspan="15">${cat}</td></tr>`; }
-      let cells = '';
-      for(let i=1; i<=14; i+=2) cells += `<td>${dayBadge(row[i])}</td><td>${typeBadge(row[i+1])}</td>`;
-      t4.innerHTML += `<tr><td class="pair-col">${pair}</td>${cells}</tr>`;
-    });
-  }
+function dayBadge(d){
+  if(!d||d==='N/A')return`<span class="badge-na">—</span>`;
+  return`<span class="day-badge">${d}</span>`;
 }
 
+const FOREX_PAIRS=['USO/USD','USD/JPY','XAU/USD','EUR/USD','AUD/NZD','USD/MXN','AUD/CAD','GBP.NZD','GBP.JPY','CHF.JPY','CADJPY','EUR.JPY'];
 
+// ── SHEET 1 DATA (từ Excel Sheet 1: Chênh Lệch Swap) ──
+const sheet1=[
+  ['USO/USD',   -0.6211,-2.7326, 0,0,      0.05,0.07,    0,-23.7,  0,0,  0,0,    null,null],
+  ['USD/JPY',   0.22,-1,         0,0,      -0.02,0.07,    0,0,      0,0,  0,0,    -0.01,0.01],
+  ['XAU/USD',   0,0,             0,0,       0.01,0.31,    27.6,0,   0,0,  0,0,    0.1,-0.1],
+  ['EUR/USD',   0,-0.01,         0,0,       0.07,-0.1,    0,0,      0,0,  0,0,    0,0],
+  ['AUD/NZD',   -0.52,0.52,      0,0,       3.9,-8.43,    0,0,      0,0,  0,0,    0.35,-0.4],
+  ['USD/MXN',   17.7,-4.32,      0,0,      -3.91,1.13,    0,0,      0,0,  0,0,    -0.01,0.01],
+  ['AUD/CAD',   0.31,-0.4,       0,0,       0.06,0.24,    0,0,      0,0,  0,0,    -0.01,0.01],
+  ['GBP.NZD',   -0.71,0.88,      0,0,       4.09,-11.49,  0,0,      0,0,  0,0,    0.46,-0.53],
+  ['GBP.JPY',   0.19,-0.48,      0,0,       0.02,-0.06,   0,0,      0,0,  0,0,    0,0.01],
+  ['CHF.JPY',   -0.39,0.14,      0,0,       0.05,-0.05,   0,0,      0,0,  0,0,    0,0.01],
+  ['CADJPY',    -0.1,0.16,       0,0,       0.21,0.14,    0,0,      0,0,  0,0,    0,0],
+  ['EUR.JPY',   0.07,-0.28,      0,0,      -0.07,0.06,    0,0,      0,0,  0,0,    -0.02,0.02],
+  ['SPI200.r',  -0.0094,0.001,   0,0,       0.02,-0.02,   0,0,      0,0,  0,0,    null,null],
+  ['USDX(DXY)', 0,0,             0,0,       0,0,          0,0,      0,0,  0,0,    null,null],
+  ['Nikkei 225',-0.0388,-0.0144, 0,0,       0,0,          0,0,      0,0,  0,0,    null,null],
+  ['GER40',     0.0103,-0.0006,  0,0,       0,0,          0,0,      0,0,  0,0,    null,null],
+  ['NAS100.r',  -0.0592,1.1162,  0,0,       0,0,          0,0,      0,0,  0,0,    null,null],
+  ['EU50r',     0.0038,-0.0003,  0,0,       0,0,          0,0,      0,0,  0,0,    null,null],
+  ['DJ30.r',    -0.1346,1.8774,  0,0,       0,0,          0,0,      0,0,  0,0,    null,null],
+  ['UK100',     0.008,-0.0015,   0,0,       0,0,          0,0,      0,0,  0,0,    null,null],
+  ['FRA40.r',   0.0057,-0.0003,  0,0,       0,0,          0,0,      0,0,  0,0,    null,null],
+  ['HK50.r',    -0.0161,0.0047,  0,0,       0.08,-0.08,   0,0,      0,0,  0,0,    null,null],
+];
+const FOOTER_VALS=['Daily change','Không biến động','Daily change','Daily change','Không biến động','Không biến động','Daily change'];
 
-async function loadReport(date) {
-  document.getElementById('reportStatus').className='status-badge status-loading';
-  document.getElementById('reportStatus').textContent='⏳ Đang tải...';
-  try {
-    const {data,error}=await sb.from('reports').select('*').eq('date',date).single();
-    if(error||!data){
-      document.getElementById('reportStatus').className='status-badge status-error';
-      document.getElementById('reportStatus').textContent='✗ Không có báo cáo';
-      return;
-    }
-    document.getElementById('topbarDate').textContent=data.date;
-    document.getElementById('sumDate').textContent=data.date;
-    document.getElementById('sumDate').style.color='var(--text)';
-    document.getElementById('reportStatus').className='status-badge status-done';
-    document.getElementById('reportStatus').textContent='✓ Hoàn thành';
-    if(data.sent_wa){
-      document.getElementById('waStatus').style.display='inline-flex';
-      document.getElementById('sumWA').textContent='✓ ĐÃ GỬI';
-      document.getElementById('sumWA').style.color='var(--green)';
-    }
-    renderData(data.excel_data);
-  } catch(e) {
-    document.getElementById('reportStatus').className='status-badge status-error';
-    document.getElementById('reportStatus').textContent='✗ Lỗi kết nối';
-  }
+const t1=document.getElementById('t1body');
+let lc1='';
+sheet1.forEach(row=>{
+  const [pair,...vals]=row;
+  const cat=FOREX_PAIRS.includes(pair)?'Forex & Commodity':'Indices';
+  if(cat!==lc1){lc1=cat;t1.innerHTML+=`<tr class="cat-row"><td colspan="15">${cat}</td></tr>`;}
+  t1.innerHTML+=`<tr><td class="pair-col">${pair}</td>${vals.map(v=>`<td>${fv(v)}</td>`).join('')}</tr>`;
+});
+t1.innerHTML+=`<tr class="footer-row"><td class="pair-col" style="background:#f0efe9">Biến động</td>${FOOTER_VALS.map(f=>`<td colspan="2">${f}</td>`).join('')}</tr>`;
+
+// ── SHEET 2 DATA (từ Excel Sheet 2: Max-Min Swap) ──
+const sheet2long=[
+  ['USO/USD',  27.6881,6.01,   84.7,    0,      11.42,  0,      null],
+  ['USD/JPY',  7.6,    3.74,   3.56,    0,      12.27,  2.11,   0.83],
+  ['XAU/USD',  -86.06,-58.44, -110.58, -520,   -57.56, -99.43, -5.06],
+  ['EUR/USD',  -6.75,  -8.6,   -6.89,  -6.5,   -7.3,   -8.78,  -0.54],
+  ['AUD/NZD',  3.42,   2.96,   3.9,    -1.7,   4.3,    -0.43,  0.35],
+  ['USD/MXN',  -259.06,-275.44,-203.4, -173.8, -213.68,-333.48,-0.87],
+  ['AUD/CAD',  3.79,   0.88,   4.41,   0,      3.43,   1.49,   0.41],
+  ['GBP.NZD',  1.18,   3.58,   4.09,   -2.1,   4.96,   -1.87,  0.46],
+  ['GBP.JPY',  5.86,   3.36,   0.84,   0,      12.39,  3.09,   1.16],
+  ['CHF.JPY',  -7.15,  -10.67, -9.56,  -7.5,   -10.42, -15.52, -0.3],
+  ['CADJPY',   1.64,   1.82,   -3.04,  0,      3.48,   -1.29,  0.3],
+  ['EUR.JPY',  1.46,   1.88,   -4.7,   0,      4.43,   -5.02,  0.43],
+  ['SPI200.r', -1.9668,-7.35,  -6.8,   -164.2, -1.47,  -1.78,  null],
+  ['USDX(DXY)',0,      -1.33,  0,      -3.9,   -4.2,   0,      null],
+  ['Nikkei 225',-5.6343,-2.98, -3.23,  0,      -4.35,  -4.09,  null],
+  ['GER40',    -3.3858,-3.04,  -4.43,  -29.7,  -2.97,  -3.08,  null],
+  ['NAS100.r', -6.1449,-6.63,  -6.13,  -558.2, -5.15,  -4.74,  null],
+  ['EU50r',    -0.8146,-3.04,  -4.43,  -63.8,  -0.79,  -0.83,  null],
+  ['DJ30.r',   -10.3358,-6.63, -6.13,  -83.6,  -8.7,   -7.98,  null],
+  ['UK100',    -2.0954,-4.73,  -6.23,  -158.3, -1.61,  -1.95,  null],
+  ['FRA40.r',  -1.1027,-3.04,  -4.43,  -85,    -3.76,  0,      null],
+  ['HK50.r',   -3.9656,-5.35,  -5.07,  0,      -2.99,  -3.93,  null],
+];
+const sheet2short=[
+  ['USO/USD',  -154.4664,-14.45,-128.5, -126.3, -13.19, 0,      null],
+  ['USD/JPY',  -17.66,  -17.18, -13.54, -14.9,  -15.83, -29.59, -0.84],
+  ['XAU/USD',  28.39,   22.39,  50.32,  0,      41.56,  11.47,  4.88],
+  ['EUR/USD',  3.05,    0.48,   3.03,   0,      4.7,    2.32,   0.53],
+  ['AUD/NZD',  -9.17,   -10.95, -8.43,  -12.9,  -8.37,  -13.03, -0.4],
+  ['USD/MXN',  19.62,   7.82,   26.65,  0,      81.26,  54.02,  0.82],
+  ['AUD/CAD',  -8.86,   -9.43,  -7.82,  -8.6,   -7.86,  -9.56,  -0.44],
+  ['GBP.NZD',  -15.62,  -16.08, -11.49, -16,    -12.34, -19.87, -0.53],
+  ['GBP.JPY',  -23.15,  -23.33, -16.36, -21.4,  -23.71, -40.51, -1.17],
+  ['CHF.JPY',  0.68,    1.68,   -2.65,  0,      -0.02,  -7.92,  0.27],
+  ['CADJPY',   -6.42,   -7.37,  -6.71,  -5.9,   -6.58,  -11.69, -0.32],
+  ['EUR.JPY',  -9.63,   -10.73, -9.9,   -8.7,   -9.24,  -23.02, -0.44],
+  ['SPI200.r', 0.4067,  1.35,   1.8,    0,      0.61,   0.33,   null],
+  ['USDX(DXY)',0,       -3.63,  0,      -7.3,   -9.98,  0,      null],
+  ['Nikkei 225',-2.0911,-3.02,  -1.77,  0,      -1.74,  -1.97,  null],
+  ['GER40',    0.1992,  1.04,   -0.57,  0,      -0.3,   -0.39,  null],
+  ['NAS100.r', 1.1162,  0.63,   1.13,   0,      0.98,   0.53,   null],
+  ['EU50r',    0.0479,  1.04,   -0.57,  0,      -0.09,  -0.09,  null],
+  ['DJ30.r',   1.8774,  0.63,   1.13,   0,      1.65,   0.89,   null],
+  ['UK100',    0.3866,  2.73,   1.23,   0,      0.59,   0.21,   null],
+  ['FRA40.r',  0.0649,  1.04,   -0.57,  0,      0.36,   0,      null],
+  ['HK50.r',   0.4588,  -0.65,  0.07,   -19.3,  0.21,   -0.27,  null],
+];
+
+function renderS2(data,id){
+  const tb=document.getElementById(id); let lc='';
+  data.forEach(row=>{
+    const[pair,...vals]=row;
+    const cat=FOREX_PAIRS.includes(pair)?'Forex & Commodity':'Indices';
+    if(cat!==lc){lc=cat;tb.innerHTML+=`<tr class="cat-row"><td colspan="8">${cat}</td></tr>`;}
+    tb.innerHTML+=`<tr><td class="pair-col">${pair}</td>${vals.map(v=>`<td>${fv(v)}</td>`).join('')}</tr>`;
+  });
 }
+renderS2(sheet2long,'t2long');
+renderS2(sheet2short,'t2short');
 
-async function loadHistory() {
-  const {data}=await sb.from('reports').select('date,status,sent_wa,created_at').order('date',{ascending:false}).limit(30);
-  if(!data) return;
+// ── SHEET 4 DATA (từ Excel Sheet 4: 3Day Swap & Type) ──
+const sheet4=[
+  ['USO/USD',   'Fri','In points',        'Fri','In points',           'Fri','In points',           'Sun','In points',  'Fri','In points',           'Sun','N/A',  'Sun','N/A'],
+  ['USD/JPY',   'Wed','In points',        'Wed','In points',           'Wed','In points',           'Wed','In points',  'Wed','In points',           'Wed','In points','Wed','In points'],
+  ['XAU/USD',   'Wed','In points',        'Wed','In points',           'Wed','In points',           'Wed','In points',  'Wed','In points',           'Wed','In points','Wed','In points'],
+  ['EUR/USD',   'Wed','In points',        'Wed','In points',           'Wed','In points',           'Wed','In points',  'Wed','In points',           'Wed','In points','Wed','In points'],
+  ['AUD/NZD',   'Wed','In points',        'Wed','In points',           'Wed','In points',           'Wed','In points',  'Wed','In points',           'Wed','In points','Wed','In points'],
+  ['USD/MXN',   'Wed','In points',        'Wed','In points',           'Wed','In points',           'Wed','In points',  'Wed','In points',           'Wed','In points','Wed','In points'],
+  ['AUD/CAD',   'Wed','In points',        'Wed','In points',           'Wed','In points',           'Wed','In points',  'Wed','In points',           'Wed','In points','Wed','In points'],
+  ['GBP.NZD',   'Wed','In points',        'Wed','In points',           'Wed','In points',           'Wed','In points',  'Wed','In points',           'Wed','In points','Wed','In points'],
+  ['GBP.JPY',   'Wed','In points',        'Wed','In points',           'Wed','In points',           'Wed','In points',  'Wed','In points',           'Wed','In points','Wed','In points'],
+  ['CHF.JPY',   'Wed','In points',        'Wed','In points',           'Wed','In points',           'Wed','In points',  'Wed','In points',           'Wed','In points','Wed','In points'],
+  ['CADJPY',    'Wed','In points',        'Wed','In points',           'Wed','In points',           'Wed','In points',  'Wed','In points',           'Wed','In points','Wed','In points'],
+  ['EUR.JPY',   'Wed','In points',        'Wed','In points',           'Wed','In points',           'Wed','In points',  'Wed','In points',           'Wed','In points','Wed','In points'],
+  ['SPI200.r',  'Fri','In currency',      'Fri','In percentage terms', 'Fri','In percentage terms', 'Fri','In points',  'Fri','Other',               'Fri','Other','Sun','N/A'],
+  ['USDX(DXY)', 'Fri','Disabled',         'Fri','In percentage terms', 'Wed','Disabled',            'Wed','In points',  'Fri','In points',           'Sun','N/A','Sun','N/A'],
+  ['Nikkei 225','Fri','In currency',      'Fri','In percentage terms', 'Fri','In percentage terms', 'Sun','N/A',        'Fri','Other',               'Fri','Other','Sun','N/A'],
+  ['GER40',     'Fri','In currency',      'Fri','In percentage terms', 'Fri','In percentage terms', 'Fri','In points',  'Fri','Other',               'Fri','Other','Sun','N/A'],
+  ['NAS100.r',  'Fri','In currency',      'Fri','In percentage terms', 'Fri','In percentage terms', 'Fri','In points',  'Fri','Other',               'Fri','Other','Sun','N/A'],
+  ['EU50r',     'Fri','In currency',      'Fri','In percentage terms', 'Fri','In percentage terms', 'Fri','In points',  'Fri','Other',               'Fri','Other','Sun','N/A'],
+  ['DJ30.r',    'Fri','In currency',      'Fri','In percentage terms', 'Fri','In percentage terms', 'Fri','In points',  'Fri','Other',               'Fri','Other','Sun','N/A'],
+  ['UK100',     'Fri','In currency',      'Fri','In percentage terms', 'Fri','In percentage terms', 'Fri','In points',  'Fri','Other',               'Fri','Other','Sun','N/A'],
+  ['FRA40.r',   'Fri','In currency',      'Fri','In percentage terms', 'Fri','In percentage terms', 'Fri','In points',  'Fri','In percentage terms', 'Sun','N/A','Sun','N/A'],
+  ['HK50.r',    'Fri','In currency',      'Fri','In percentage terms', 'Fri','In percentage terms', 'Fri','In points',  'Fri','Other',               'Fri','Other','Sun','N/A'],
+];
 
-  // populate date select
-  const sel=document.getElementById('dateSelect');
-  sel.innerHTML=data.map(r=>`<option value="${r.date}">${r.date}</option>`).join('');
-
-  // history table
-  const tbody=document.getElementById('historyBody');
-  tbody.innerHTML=data.map(r=>`<tr>
-    <td style="font-weight:600">${r.date}</td>
-    <td><span class="status-badge ${r.status==='done'?'status-done':'status-loading'}">${r.status}</span></td>
-    <td>${r.sent_wa?'<span style="color:var(--green);font-weight:600">✓ Đã gửi</span>':'<span style="color:var(--muted)">—</span>'}</td>
-    <td style="color:var(--muted)">${r.created_at?r.created_at.substring(11,16):'—'}</td>
-  </tr>`).join('');
-
-  // load latest
-  if(data.length>0) loadReport(data[0].date);
-}
-
-loadHistory();
+const t4=document.getElementById('t4body'); let lc4='';
+sheet4.forEach(row=>{
+  const[pair,...vals]=row;
+  const cat=FOREX_PAIRS.includes(pair)?'Forex & Commodity':'Indices';
+  if(cat!==lc4){lc4=cat;t4.innerHTML+=`<tr class="cat-row"><td colspan="15">${cat}</td></tr>`;}
+  let cells='';
+  for(let i=0;i<vals.length;i+=2)cells+=`<td>${dayBadge(vals[i])}</td><td>${typeBadge(vals[i+1])}</td>`;
+  t4.innerHTML+=`<tr><td class="pair-col">${pair}</td>${cells}</tr>`;
+});
 </script>
 </body>
 </html>
