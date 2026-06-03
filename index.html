@@ -26,7 +26,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13
 .stat-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
 .stat-label{font-size:10px;color:rgba(255,255,255,.4);font-family:var(--cond);text-transform:uppercase;letter-spacing:.08em}
 .stat-val{font-family:var(--cond);font-size:16px;font-weight:600;color:#fff}
-.main{overflow:hidden}
+.main{overflow:auto}
+#s2long .tbl-outer,#s2short .tbl-outer{overflow-x:auto;-webkit-overflow-scrolling:touch}
+#s2long table,#s2short table{min-width:550px}
 .topbar{background:var(--surf);border-bottom:1px solid var(--border);padding:12px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20}
 .topbar-title{font-family:var(--cond);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 .topbar-title span{color:var(--text)}.clock{font-family:var(--cond);font-size:18px;font-weight:700;color:var(--text)}
@@ -44,8 +46,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13
 .section-header{margin-bottom:12px}
 .section-header h2{font-family:var(--cond);font-size:18px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
 .section-header p{font-size:11px;color:var(--muted);margin-top:2px}
-.tbl-outer{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--border);border-radius:5px;background:var(--surf);margin-bottom:20px}
-table{width:100%;border-collapse:collapse;font-size:12px}#s2long table,#s2short table{min-width:600px;width:100%}
+.tbl-outer{overflow-x:auto;border:1px solid var(--border);border-radius:5px;background:var(--surf);margin-bottom:20px}
+table{width:100%;border-collapse:collapse;font-size:12px}
 .th-broker{background:var(--text);color:#fff}
 .th-broker th{padding:7px 10px;text-align:center;font-family:var(--cond);font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;border-right:1px solid rgba(255,255,255,.1)}
 .th-broker th:first-child{text-align:left;border-right:1px solid rgba(255,255,255,.15);background:rgba(0,0,0,.2)}
