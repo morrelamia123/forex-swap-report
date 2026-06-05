@@ -27,8 +27,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13
 .stat-label{font-size:10px;color:rgba(255,255,255,.4);font-family:var(--cond);text-transform:uppercase;letter-spacing:.08em}
 .stat-val{font-family:var(--cond);font-size:16px;font-weight:600;color:#fff}
 .main{overflow:auto}
-#s2long .tbl-outer,#s2short .tbl-outer{overflow-x:auto;-webkit-overflow-scrolling:touch}
-#s2long table,#s2short table{min-width:550px}
 .topbar{background:var(--surf);border-bottom:1px solid var(--border);padding:12px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20}
 .topbar-title{font-family:var(--cond);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 .topbar-title span{color:var(--text)}.clock{font-family:var(--cond);font-size:18px;font-weight:700;color:var(--text)}
@@ -85,14 +83,10 @@ td.pair-col{text-align:left;font-family:var(--semi);font-size:12px;font-weight:6
 .s2-btn.active{background:var(--green);color:#fff;border-color:var(--green)}
 #s2short{display:none}
 @media(max-width:768px){
-  .page{grid-template-columns:1fr}
-  .sidebar{display:none}
+  .page{grid-template-columns:1fr}.sidebar{display:none}
   .sheet2-wrap,.sheet3-wrap{grid-template-columns:1fr}
-  .s2-toggle{justify-content:center}
-  .s2-btn{flex:1;text-align:center;padding:12px;font-size:15px}
-  .content{padding:16px}
-  .summary-strip{gap:8px}
-  .sum-card{min-width:80px}
+  .s2-toggle{justify-content:center}.s2-btn{flex:1;text-align:center;padding:12px;font-size:15px}
+  .content{padding:16px}.summary-strip{gap:8px}.sum-card{min-width:80px}
 }
 </style>
 </head>
@@ -123,8 +117,8 @@ td.pair-col{text-align:left;font-family:var(--semi);font-size:12px;font-weight:6
     <div class="clock" id="clock">--:--:--</div>
   </div>
   <div class="status-strip">
-    <span class="status-done">Hoan thanh</span>
-    <span style="font-family:var(--cond);font-size:11px;color:var(--muted)">Xem ngay: <strong>2026-06-05</strong></span>
+    <span class="status-done">✓ Hoan thanh</span>
+    <span style="font-family:var(--cond);font-size:11px;color:var(--muted)">Ngay: <strong>2026-06-05</strong></span>
   </div>
   <div class="tab-bar">
     <button class="tab-btn active" onclick="showTab(0,this)">01 -- Chenh Lech</button>
@@ -137,7 +131,7 @@ td.pair-col{text-align:left;font-family:var(--semi);font-size:12px;font-weight:6
       <div class="sum-card"><div class="sum-label">Tong san</div><div class="sum-val">7</div><div class="sum-sub">Vantage · Think · Go · Exness · Tickmill · XM · FOREX</div></div>
       <div class="sum-card"><div class="sum-label">Cap tien</div><div class="sum-val">22</div><div class="sum-sub">Forex + Index + Commodity</div></div>
       <div class="sum-card"><div class="sum-label">Bao cao</div><div class="sum-val" style="font-size:16px">2026-06-05</div><div class="sum-sub">Cap nhat tu dong</div></div>
-      <div class="sum-card"><div class="sum-label">WhatsApp</div><div class="sum-val" style="font-size:14px;color:var(--green)">DA GUI</div><div class="sum-sub">Gui luc tao bao cao</div></div>
+      <div class="sum-card"><div class="sum-label">WhatsApp</div><div class="sum-val" style="font-size:14px;color:var(--green)">DA GUI</div><div class="sum-sub">Gui qua Twilio</div></div>
     </div>
     <div id="tab0" class="sheet-panel active">
       <div class="section-header"><h2>Bang Chenh Lech Swap</h2><p>Thay doi swap long &amp; short theo tung san -- 2026-06-05</p></div>
@@ -182,30 +176,18 @@ td.pair-col{text-align:left;font-family:var(--semi);font-size:12px;font-weight:6
 </div>
 <script>
 
-setInterval(function() {
-  document.getElementById('clock').textContent = new Date().toLocaleTimeString('vi-VN');
-}, 1000);
-function switchS2(side, btn) {
-  var s2long  = document.getElementById('s2long');
-  var s2short = document.getElementById('s2short');
-  if (side === 'long') {
-    s2long.style.display  = 'block';
-    s2short.style.display = 'none';
-  } else {
-    s2long.style.display  = 'none';
-    s2short.style.display = 'block';
-  }
-  var btns = document.querySelectorAll('.s2-btn');
-  for (var i = 0; i < btns.length; i++) { btns[i].classList.remove('active'); }
+setInterval(function(){document.getElementById('clock').textContent=new Date().toLocaleTimeString('vi-VN');},1000);
+function switchS2(side,btn){
+  document.getElementById('s2long').style.display=side==='long'?'block':'none';
+  document.getElementById('s2short').style.display=side==='short'?'block':'none';
+  document.querySelectorAll('.s2-btn').forEach(function(b){b.classList.remove('active');});
   btn.classList.add('active');
 }
-function showTab(idx, btn) {
-  var panels = document.querySelectorAll('.sheet-panel');
-  for (var i = 0; i < panels.length; i++) { panels[i].classList.remove('active'); }
-  var allBtns = document.querySelectorAll('.tab-btn, .nav a');
-  for (var i = 0; i < allBtns.length; i++) { allBtns[i].classList.remove('active'); }
-  document.getElementById('tab' + idx).classList.add('active');
-  if (btn) btn.classList.add('active');
+function showTab(idx,btn){
+  document.querySelectorAll('.sheet-panel').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.tab-btn,.nav a').forEach(function(b){b.classList.remove('active');});
+  document.getElementById('tab'+idx).classList.add('active');
+  if(btn)btn.classList.add('active');
 }
 
 </script>
